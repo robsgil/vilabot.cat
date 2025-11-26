@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vilabot.cat — Descobreix Catalunya</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --senyera-red: #DA121A;
+            --senyera-yellow: #FCDD09;
+            --senyera-red-dark: #B50E14;
+            --senyera-yellow-dark: #E5C708;
+            --ink: #1a1a1a;
+            --paper: #FFFEF5;
+            --paper-dark: #F5F4EC;
+            --shadow: rgba(26, 26, 26, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', system-ui, sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Senyera stripes background */
+        .senyera-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .stripe {
+            position: absolute;
+            width: 120%;
+            left: -10%;
+            transform: rotate(-3deg);
+        }
+
+        .stripe-1 { top: -5%; height: 15%; background: var(--senyera-yellow); }
+        .stripe-2 { top: 10%; height: 8%; background: var(--senyera-red); opacity: 0.9; }
+        .stripe-3 { top: 18%; height: 12%; background: var(--senyera-yellow); opacity: 0.7; }
+        .stripe-4 { top: 30%; height: 6%; background: var(--senyera-red); opacity: 0.5; }
+
+        @keyframes float {
+            0%, 100% { transform: rotate(-3deg) translateY(0); }
+            50% { transform: rotate(-3deg) translateY(10px); }
+        }
+
+        .stripe { animation: float 8s ease-in-out infinite; }
+        .stripe-2 { animation-delay: -2s; }
+        .stripe-3 { animation-delay: -4s; }
+        .stripe-4 { animation-delay: -6s; }
+
+        /* Header */
+        header {
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: 1.8rem;
+            color: var(--senyera-red);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--senyera-yellow);
+            border-radius: 50%;
+            border: 2px solid var(--senyera-red);
+        }
+
+        /* Hero Section */
+        .hero {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 4rem 2rem 6rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: var(--ink);
+        }
+
+        .hero h1 span {
+            color: var(--senyera-red);
+            position: relative;
+        }
+
+        .hero h1 span::after {
+            content: '';
+            position: absolute;
+            bottom: 0.1em;
+            left: 0;
+            width: 100%;
+            height: 0.15em;
+            background: var(--senyera-yellow);
+            z-index: -1;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: #555;
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            line-height: 1.6;
+        }
+
+        /* Search Container */
+        .search-container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 
+                0 4px 20px var(--shadow),
+                0 0 0 1px rgba(0,0,0,0.03);
+            padding: 1.5rem;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-container::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: 20%;
+            right: 20%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--senyera-yellow), var(--senyera-red), var(--senyera-yellow));
+            border-radius: 4px 4px 0 0;
+        }
+
+        .search-input-wrapper {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            font-size: 1.1rem;
+            padding: 1rem;
+            font-family: inherit;
+            background: transparent;
+            color: var(--ink);
+        }
+
+        .search-input:focus {
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: #999;
+        }
+
+        .search-btn {
+            background: var(--senyera-red);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-btn:hover {
+            background: var(--senyera-red-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(218, 18, 26, 0.3);
+        }
+
+        .search-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .search-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Suggestions */
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            justify-content: center;
+        }
+
+        .suggestion-chip {
+            background: var(--paper-dark);
+            border: 1px solid rgba(0,0,0,0.06);
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            font-size: 0.9rem;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .suggestion-chip:hover {
+            background: var(--senyera-yellow);
+            color: var(--ink);
+            border-color: var(--senyera-yellow-dark);
+        }
+
+        /* Results Section */
+        .results-section {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .results-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--paper-dark);
+        }
+
+        .results-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--ink);
+        }
+
+        .results-meta {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .results-content {
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .results-content p {
+            margin-bottom: 1rem;
+        }
+
+        .results-content strong {
+            color: var(--senyera-red);
+        }
+
+        .intent-debug {
+            background: var(--paper-dark);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+        }
+
+        .intent-debug summary {
+            cursor: pointer;
+            color: #888;
+            font-weight: 500;
+        }
+
+        .intent-debug pre {
+            margin-top: 0.5rem;
+            overflow-x: auto;
+            color: #555;
+        }
+
+        /* Loading State */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--paper-dark);
+            border-top-color: var(--senyera-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Error State */
+        .error {
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+            border-radius: 12px;
+            padding: 1.5rem;
+            color: #991B1B;
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--senyera-red);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 640px) {
+            header {
+                padding: 1rem;
+            }
+
+            .hero {
+                padding: 2rem 1rem 4rem;
+            }
+
+            .search-input-wrapper {
+                flex-direction: column;
+            }
+
+            .search-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .results-section {
+                padding: 1rem;
+            }
+
+            .results-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated background stripes -->
+    <div class="senyera-bg">
+        <div class="stripe stripe-1"></div>
+        <div class="stripe stripe-2"></div>
+        <div class="stripe stripe-3"></div>
+        <div class="stripe stripe-4"></div>
+    </div>
+
+    <header>
+        <a href="/" class="logo">
+            <span class="logo-dot"></span>
+            Vilabot.cat
+        </a>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>
+                Descobreix què passa<br>
+                <span>al teu voltant</span>
+            </h1>
+            <p>
+                El teu assistent intel·ligent per trobar esdeveniments locals a Catalunya. 
+                Pregunta en català, troba experiències úniques.
+            </p>
+
+            <div class="search-container">
+                <form id="searchForm">
+                    <div class="search-input-wrapper">
+                        <input 
+                            type="text" 
+                            id="queryInput" 
+                            class="search-input" 
+                            placeholder="Què vols fer? On? Quan?"
+                            autocomplete="off"
+                            required
+                        >
+                        <button type="submit" class="search-btn" id="searchBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.3-4.3"></path>
+                            </svg>
+                            Cerca
+                        </button>
+                    </div>
+                </form>
+                <div class="suggestions">
+                    <span class="suggestion-chip" data-query="Què puc fer aquest cap de setmana a Barcelona amb nens?">🎪 Cap de setmana amb nens</span>
+                    <span class="suggestion-chip" data-query="Concerts de música en viu a Girona">🎵 Concerts a Girona</span>
+                    <span class="suggestion-chip" data-query="Mercats d'artesania a Tarragona">🛍️ Mercats artesanals</span>
+                    <span class="suggestion-chip" data-query="Festes majors aquest estiu">🎉 Festes majors</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="results-section" id="resultsSection" style="display: none;">
+            <div class="loading" id="loading">
+                <div class="loading-spinner"></div>
+                <p>Buscant esdeveniments per tu...</p>
+            </div>
+
+            <div id="resultsContainer"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>
+            Fet amb ❤️ per Catalunya — 
+            <a href="https://github.com/vilabot" target="_blank">GitHub</a>
+        </p>
+        <p style="margin-top: 0.5rem; opacity: 0.7;">
+            Fase 1: Descobriment d'esdeveniments locals
+        </p>
+    </footer>
+
+    <script>
+        const form = document.getElementById('searchForm');
+        const input = document.getElementById('queryInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const resultsSection = document.getElementById('resultsSection');
+        const loading = document.getElementById('loading');
+        const resultsContainer = document.getElementById('resultsContainer');
+
+        // Handle suggestion chips
+        document.querySelectorAll('.suggestion-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                input.value = chip.dataset.query;
+                form.dispatchEvent(new Event('submit'));
+            });
+        });
+
+        // Handle form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const query = input.value.trim();
+            if (!query) return;
+
+            // Show loading state
+            resultsSection.style.display = 'block';
+            loading.classList.add('active');
+            resultsContainer.innerHTML = '';
+            searchBtn.disabled = true;
+
+            try {
+                const response = await fetch('/api/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                displayResults(data);
+
+            } catch (error) {
+                displayError(error.message);
+            } finally {
+                loading.classList.remove('active');
+                searchBtn.disabled = false;
+            }
+        });
+
+        function displayResults(data) {
+            const intentJson = JSON.stringify(data.extracted_intent, null, 2);
+            
+            // Convert markdown-like formatting to HTML
+            let formattedResponse = data.response
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+
+            resultsContainer.innerHTML = `
+                <div class="results-card">
+                    <div class="results-header">
+                        <h2>Resultats</h2>
+                        <span class="results-meta">
+                            ${data.sources_scraped} fonts · ${data.events_found} esdeveniments
+                        </span>
+                    </div>
+                    <div class="results-content">
+                        ${formattedResponse}
+                    </div>
+                    <details class="intent-debug">
+                        <summary>🔍 Detalls de la cerca</summary>
+                        <pre>${intentJson}</pre>
+                    </details>
+                </div>
+            `;
+
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function displayError(message) {
+            resultsContainer.innerHTML = `
+                <div class="error">
+                    <strong>Ups!</strong> Hi ha hagut un error: ${message}
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
